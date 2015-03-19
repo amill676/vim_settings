@@ -36,3 +36,5 @@ imap <C-b> <Esc>i
 imap <C-f> <Esc>la
 imap <C-d> <Esc>lxi
 
+" Get the CScope Vim mappings
+source vim_files/cscope_maps.vim
