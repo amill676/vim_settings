@@ -4,7 +4,7 @@ set hlsearch
 
 " Colors
 syntax enable
-set background=dark
+set background=light
 colorscheme solarized
 se t_Co=16
 
