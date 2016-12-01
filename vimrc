@@ -128,3 +128,6 @@ source ~/.vim/plugin/matchit.vim
 
 " Fix problem with not being able to delete autoindents
 :set backspace=indent,eol,start
+
+" Chnage indentation based on file
+autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
