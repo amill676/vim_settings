@@ -1,3 +1,48 @@
+" The 'tab drop' command opens a new tab if a tab doesnt
+" already exist with the file. Unfortunately it only seems to be available
+" on vim versions that were built with GUI support. Here is a replacement
+" that was copied from
+" https://github.com/ohjames/tabdrop/blob/master/plugin/tabdrop.vim
+function! s:TabDropHelper(file, here)
+  let visible = {}
+  let path = fnamemodify(a:file, ':p')
+  for t in range(1, tabpagenr('$'))
+    for b in tabpagebuflist(t)
+      if fnamemodify(bufname(b), ':p') == path
+        if a:here
+          let current = tabpagenr()
+          exec "tabnext " . t
+          exec "tabmove " . (current - 1)
+        else
+          exec "tabnext " . t
+        endif
+        return
+      endif
+    endfor
+  endfor
+
+  if bufname('') == '' && &modified == 0
+    exec "edit " . a:file
+  else
+    exec "tabnew " . a:file
+  end
+endfunction
+
+function! s:TabDrop(file)
+  if exists(":drop")
+    exec "tab drop " . a:file
+  else
+    call s:TabDropHelper(a:file, 0)
+  end
+endfunction
+
+function! s:TabDropHere(file)
+  call s:TabDropHelper(a:file, 1)
+endfunction
+
+command! -nargs=1 -complete=file TabDrop call s:TabDrop(<q-args>)
+command! -nargs=1 -complete=file TabDropHere call s:TabDropHere(<q-args>)
+"=================================================
 " Figure out what OS this is
 function! GetRunningOS()
   if has("win32")
@@ -11,7 +56,7 @@ function! GetRunningOS()
     endif
   endif
 endfunction
-let s:os = GetRunningOS()
+let os = GetRunningOS()
 
 "=================================================
 " plug.vim setup
@@ -66,21 +111,7 @@ set guifont=Monaco:h14
 " fzf settings
 :nnoremap <C-p> :Files<Return>
 let g:fzf_buffers_jump = 1
-" The following function was necessary to open an existing tab for a file if
-" it exists. Otherwise you end up with a million tabs for the same file every
-" time you search for and open it
-function! s:GotoOrOpen(command, ...)
-  for file in a:000
-    if a:command == 'e'
-      exec 'e ' . file
-    else
-      exec "tab drop " . file
-    endif
-  endfor
-endfunction
-command! -nargs=+ GotoOrOpen call s:GotoOrOpen(<f-args>)
 let g:fzf_action = {
-  \ 'ctrl-t': 'GotoOrOpen tab',
+  \ 'ctrl-t': 'TabDropHere',
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit' }
-
