@@ -1,10 +1,30 @@
+" Figure out what OS this is
+function! GetRunningOS()
+  if has("win32")
+    return "win"
+  endif
+  if has("unix")
+    if system('uname')=~'Darwin'
+      return "mac"
+    else
+      return "linux"
+    endif
+  endif
+endfunction
+let s:os = GetRunningOS()
+
 "=================================================
 " plug.vim setup
 call plug#begin('~/.vim/plugged')
 " Make sure you use single quotes
 
+" On Mac OS homebrew puts fzf in /usr/local/opt. On linux we put in home dir
+if os ==? "linux"
+    Plug '~/.fzf'
+else
+    Plug '/usr/local/opt/fzf'
+endif
 Plug 'micha/vim-colors-solarized'
-Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'https://github.com/tpope/vim-fugitive.git'
 Plug 'nvie/vim-flake8'
