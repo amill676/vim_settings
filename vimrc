@@ -106,6 +106,11 @@ set tabstop=4
 set expandtab
 set shiftwidth=4
 
+augroup FileTypeSpecificAutocommands
+    autocmd FileType javascript setlocal tabstop=2 softtabstop=2 shiftwidth=2
+    autocmd FileType scss setlocal tabstop=2 softtabstop=2 shiftwidth=2
+augroup END
+
 set guifont=Monaco:h14
 
 " fzf settings
