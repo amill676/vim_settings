@@ -114,9 +114,40 @@ augroup END
 set guifont=Monaco:h14
 
 " fzf settings
+" See https://github.com/junegunn/fzf.vim for explanations
 :nnoremap <C-p> :Files<Return>
 let g:fzf_buffers_jump = 1
 let g:fzf_action = {
   \ 'ctrl-t': 'TabDropHere',
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit' }
+" Specify the ripgrep command to use for searching over file contents
+" let g:rg_command = '
+"   \ rg --column --line-number --no-heading --fixed-strings --no-ignore --hidden --follow --color "always"
+"   \ -g "*.{js,php,md,styl,jade,html,config,py,cpp,c,go,hs,rb,conf}"
+"   \ -g "!*.{csv}"
+"   \ -g "!{.git,node_modules,vendor,3rdParty,gsapi}/*" '
+" " Map :F to have fzf execute the ripgrep command (and provide fuzziness and search options on top)
+" command! -bang -nargs=* F call fzf#vim#grep(g:rg_command .shellescape(<q-args>), {'options': ['-e']}, <bang>0)
+
+" See https://github.com/junegunn/fzf.vim#example-advanced-ripgrep-integration
+function! RipgrepFzf(query, fullscreen, files)
+  let command_fmt = '
+    \ rg --column --line-number --no-heading --color=always --smart-case 
+    \ -g %s 
+    \ -g "!{.git,node_modules,vendor,3rdParty,gsapi,s83}/*"
+    \ -- %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:files), shellescape(a:query))
+  let reload_command = printf(command_fmt, shellescape(a:files), '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0, "*.{js,php,md,styl,jade,html,config,py,cpp,c,go,hs,rb,conf,yaml,txt}")
+command! -nargs=* -bang PYRG call RipgrepFzf(<q-args>, <bang>0, "*.{py}")
+command! -nargs=* -bang JSRG call RipgrepFzf(<q-args>, <bang>0, "*.{js}")
+command! -nargs=* -bang CRG call RipgrepFzf(<q-args>, <bang>0, "*.{c,cpp,cc,h}")
+:nnoremap <C-f> :RG<Return>
+:nnoremap <C-f><C-p> :PYRG<Return>
+:nnoremap <C-f><C-j> :JSRG<Return>
+:nnoremap <C-f><C-h> :CRG<Return>
