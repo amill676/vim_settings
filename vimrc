@@ -64,11 +64,12 @@ call plug#begin('~/.vim/plugged')
 " Make sure you use single quotes
 
 " On Mac OS homebrew puts fzf in /usr/local/opt. On linux we put in home dir
-if os ==? "linux"
-    Plug '~/.fzf'
-else
-    Plug '/usr/local/opt/fzf'
-endif
+" if os ==? "linux"
+     Plug '~/.fzf'
+" else
+     Plug '/usr/local/opt/fzf'
+" endif
+
 Plug 'micha/vim-colors-solarized'
 Plug 'junegunn/fzf.vim'
 Plug 'https://github.com/tpope/vim-fugitive.git'
@@ -78,8 +79,8 @@ Plug 'sheerun/vim-polyglot'  " syntax highlighting for lots of languages
 
 " Tag bar displays functions, classes, etc. in file
 " Will need to install exuberant ctags: brew install ctags-exuberant
-Plug 'majutsushi/tagbar'
-nmap tt :TagbarToggle<CR>
+"Plug 'majutsushi/tagbar'
+"nmap tt :TagbarToggle<CR>
 
 " Tools for pull request code review locally (DONT WORK)
 " Plug 'google/vim-maktaba'
@@ -108,6 +109,7 @@ set shiftwidth=4
 
 augroup FileTypeSpecificAutocommands
     autocmd FileType javascript setlocal tabstop=2 softtabstop=2 shiftwidth=2
+    autocmd FileType yaml setlocal tabstop=2 softtabstop=2 shiftwidth=2
     autocmd FileType scss setlocal tabstop=2 softtabstop=2 shiftwidth=2
 augroup END
 
@@ -120,3 +122,4 @@ let g:fzf_action = {
   \ 'ctrl-t': 'TabDropHere',
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit' }
+" For ignoring files within fzf, see https://github.com/junegunn/fzf.vim/issues/453#issuecomment-526791474
