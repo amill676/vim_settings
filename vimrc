@@ -117,12 +117,16 @@ set guifont=Monaco:h14
 
 " fzf settings
 " See https://github.com/junegunn/fzf.vim for explanations
+command! -bang RandomFiles call fzf#vim#files('~/vm/random_dossier_files', <bang>0)
 :nnoremap <C-p> :Files<Return>
+:nnoremap <C-r><C-p> :RandomFiles<Return>
 let g:fzf_buffers_jump = 1
 let g:fzf_action = {
   \ 'ctrl-t': 'TabDropHere',
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit' }
+
+
 " Specify the ripgrep command to use for searching over file contents
 " let g:rg_command = '
 "   \ rg --column --line-number --no-heading --fixed-strings --no-ignore --hidden --follow --color "always"
@@ -130,6 +134,8 @@ let g:fzf_action = {
 "   \ -g "!*.{csv}"
 "   \ -g "!{.git,node_modules,vendor,3rdParty,gsapi}/*" '
 " " Map :F to have fzf execute the ripgrep command (and provide fuzziness and search options on top)
+" Disabled the following since it wasn't used. If fuzzy search over file
+" contents is desired, can map the following command to a shortcut
 " command! -bang -nargs=* F call fzf#vim#grep(g:rg_command .shellescape(<q-args>), {'options': ['-e']}, <bang>0)
 
 " See https://github.com/junegunn/fzf.vim#example-advanced-ripgrep-integration
