@@ -57,30 +57,26 @@ function! GetRunningOS()
   endif
 endfunction
 let os = GetRunningOS()
-
+"   
 "=================================================
 " plug.vim setup
 call plug#begin('~/.vim/plugged')
-" Make sure you use single quotes
-
-" On Mac OS homebrew puts fzf in /usr/local/opt. On linux we put in home dir
-" if os ==? "linux"
-     Plug '~/.fzf'
-" else
-     Plug '/usr/local/opt/fzf'
-" endif
-
+# On Mac OS make sure to link from the fzf directory install in brew (/usr/local/opt/fzf or /opt/homebrew/opt/fzf) to ~/.fzf
+Plug '~/.fzf'
 Plug 'micha/vim-colors-solarized'
 Plug 'junegunn/fzf.vim'
 Plug 'https://github.com/tpope/vim-fugitive.git'
 Plug 'nvie/vim-flake8'
 Plug 'sheerun/vim-polyglot'  " syntax highlighting for lots of languages
-"Plug 'Valloric/YouCompleteMe'
+Plug 'aduros/ai.vim'
+Plug 'github/copilot.vim'
+"Plug 'tabnine/YouCompleteMe'
+"Plug 'jayli/vim-easycomplete'
 
 " Tag bar displays functions, classes, etc. in file
 " Will need to install exuberant ctags: brew install ctags-exuberant
-"Plug 'majutsushi/tagbar'
-"nmap tt :TagbarToggle<CR>
+" Plug 'majutsushi/tagbar'
+" nmap tt :TagbarToggle<CR>
 
 " Tools for pull request code review locally (DONT WORK)
 " Plug 'google/vim-maktaba'
@@ -88,7 +84,14 @@ Plug 'sheerun/vim-polyglot'  " syntax highlighting for lots of languages
 
 " Initialize plugin system
 call plug#end()
+" NOTE: plug#end sets some indentation and syntax related. See the vim-plug
+" page for details.
 "=================================================
+
+" If there are long lines, syntax highlighting gets very slow. We set the max
+" width of a line to highlight here so that long lines in a file don't cause
+" vim to be slow
+" set synmaxcol=120
 
 colorscheme solarized
 set background=light
@@ -108,6 +111,7 @@ set expandtab
 set shiftwidth=4
 
 augroup FileTypeSpecificAutocommands
+    autocmd FileType typescript setlocal tabstop=2 softtabstop=2 shiftwidth=2
     autocmd FileType javascript setlocal tabstop=2 softtabstop=2 shiftwidth=2
     autocmd FileType yaml setlocal tabstop=2 softtabstop=2 shiftwidth=2
     autocmd FileType scss setlocal tabstop=2 softtabstop=2 shiftwidth=2
@@ -118,8 +122,10 @@ set guifont=Monaco:h14
 " fzf settings
 " See https://github.com/junegunn/fzf.vim for explanations
 command! -bang RandomFiles call fzf#vim#files('~/vm/random_dossier_files', <bang>0)
+command! -bang SettingsFiles call fzf#vim#files('~/settings', <bang>0)
 :nnoremap <C-p> :Files<Return>
 :nnoremap <C-r><C-p> :RandomFiles<Return>
+:nnoremap <C-s><C-p> :SettingsFiles<Return>
 let g:fzf_buffers_jump = 1
 let g:fzf_action = {
   \ 'ctrl-t': 'TabDropHere',
@@ -151,9 +157,9 @@ function! RipgrepFzf(query, fullscreen, files)
   call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
 endfunction
 
-command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0, "*.{js,php,md,styl,jade,html,config,py,cpp,c,go,hs,rb,conf,yaml,txt}")
-command! -nargs=* -bang PYRG call RipgrepFzf(<q-args>, <bang>0, "*.{py}")
-command! -nargs=* -bang JSRG call RipgrepFzf(<q-args>, <bang>0, "*.{js}")
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0, "*.{js,php,md,styl,jade,html,config,py,cpp,c,cc,h,go,hs,rb,conf,yaml,txt,properties}")
+command! -nargs=* -bang PYRG call RipgrepFzf(<q-args>, <bang>0, "*.{py,properties,pyx}")
+command! -nargs=* -bang JSRG call RipgrepFzf(<q-args>, <bang>0, "*.{js,scss,css,sass,html}")
 command! -nargs=* -bang CRG call RipgrepFzf(<q-args>, <bang>0, "*.{c,cpp,cc,h}")
 :nnoremap <C-f> :RG<Return>
 :nnoremap <C-f><C-p> :PYRG<Return>
