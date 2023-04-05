@@ -62,6 +62,7 @@ let os = GetRunningOS()
 " plug.vim setup
 call plug#begin('~/.vim/plugged')
 " On Mac OS make sure to link from the fzf directory install in brew (/usr/local/opt/fzf or /opt/homebrew/opt/fzf) to ~/.fzf
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug '~/.fzf'
 Plug 'micha/vim-colors-solarized'
 Plug 'junegunn/fzf.vim'
